@@ -155,7 +155,10 @@ class CMakeBuild(build_ext):
             os.makedirs(build_folder)
 
         cmake_setup = ['cmake', ext.sourcedir] + cmake_args
-        cmake_build = ['cmake', '--build', '.'] + build_args
+        # The Python extension links kiwi_static. Building the default `all`
+        # target also compiles the unused Kiwi shared library, duplicating the
+        # largest C++ translation units and their peak memory use.
+        cmake_build = ['cmake', '--build', '.', '--target', '_kiwipiepy'] + build_args
 
         print("Building extension for Python {}".format(sys.version.split('\n',1)[0]))
         print("Invoking CMake setup: '{}'".format(' '.join(cmake_setup)))
